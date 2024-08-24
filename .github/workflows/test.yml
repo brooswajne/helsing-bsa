@@ -1,0 +1,42 @@
+# Runs end-to-end tests for the entire project, ensuring that our infrastructure
+# deployment logic works correctly and that all components interact as intended.
+
+permissions: {} # default to no permissions, set at the per-job level
+
+on:
+  # Doesn't run automatically, as the tests do not take a negligible amount of 
+  # time to run, and could in theory cost some money.
+  workflow_dispatch:
+  workflow_call:
+
+name: test
+jobs:
+
+  test:
+    permissions:
+      contents: read # allows repository content checkout
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: tests }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+
+      # Since these are just ephemeral test environments, we might as well
+      # store our stack's state locally (and discard it when the test run
+      # completes).
+      - run: pulumi login --local
+      # This has the downside of meaning we can't easily "rescue" a test
+      # stack if it gets stranded for some reason. But really, if we see
+      # any stranded test resources in AWS we know we can safely delete
+      # them.
+
+      - run: python -m pytest . --verbose --color=yes
+        env:
+          PULUMI_CONFIG_PASSPHRASE: "anything"
+          # GitHub runners are located in the US, so we might as well run
+          # our tests there to reduce latency.
+          AWS_REGION: us-east-1

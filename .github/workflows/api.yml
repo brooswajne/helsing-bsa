@@ -1,0 +1,57 @@
+# Static checks and tests for the API endpoints code.
+
+permissions: {} # default to no permissions, set at the per-job level
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    paths:
+      - ".github/workflows/api.yml"
+      - "api/**"
+  workflow_call:
+  workflow_dispatch:
+
+name: api
+jobs:
+
+  fmt:
+    permissions:
+      contents: read # allows repository content checkout
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: api }
+    steps:
+      - uses: actions/checkout@v4
+      # Our .rustfmt.toml uses some nightly-only available features
+      - uses: dtolnay/rust-toolchain@nightly
+        with: { components: rustfmt }
+      - run: cargo fmt --check
+
+  clippy:
+    permissions:
+      contents: read # allows repository content checkout
+      checks: write # allows annotating the PR with check output
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: api }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with: { components: clippy }
+      - uses: giraffate/clippy-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workdir: api
+          reporter: github-pr-check
+
+  test:
+    permissions:
+      contents: read # allows repository content checkout
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: api }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test

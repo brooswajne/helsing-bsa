@@ -1,0 +1,63 @@
+# Automatic deployment of the project to a live environment.
+
+permissions: {} # default to no permissions, set at the per-job level
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: >
+          The environment to deploy to.
+
+          A Pulumi stack with a matching name must exist, and its configuration
+          must be checked in to the current branch.
+        required: true
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      # See https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
+      secrets:
+        DEPLOYMENT_AWS_REGION: { required: true }
+        DEPLOYMENT_AWS_ACCESS_KEY_ID: { required: true }
+        DEPLOYMENT_AWS_ACCESS_KEY_SECRET: { required: true }
+        DEPLOYMENT_PULUMI_ACCESS_TOKEN: { require: true }
+
+name: deploy
+jobs:
+
+  deploy:
+    name: "deploy: ${{ inputs.environment }}"
+    environment:
+      name: ${{ inputs.environment }}
+      url: "https://app.pulumi.com/brooswajne/BSA/${{ inputs.environment }}"
+    permissions:
+      contents: read
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install ./infrastructure
+
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          # NOTE: These are environment secrets, which are associated to the GitHub
+          # "environments" themselves. This allows us to use different credentials
+          # when deploying to different environments (if they're inside different
+          # AWS accounts).
+          aws-region: ${{ secrets.DEPLOYMENT_AWS_REGION }}
+          aws-access-key-id: ${{ secrets.DEPLOYMENT_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEPLOYMENT_AWS_ACCESS_KEY_SECRET }}
+      - uses: pulumi/actions@v5
+        with:
+          command: up
+          work-dir: infrastructure
+          stack-name: brooswajne/${{ inputs.environment }}
+          comment-on-summary: true
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.DEPLOYMENT_PULUMI_ACCESS_TOKEN }}
