@@ -19,7 +19,7 @@ import pytest
 
 TEST_STACK_NAME = "Test"
 
-PULUMI_PROJECT_ROOT = Path(__file__).parent.joinpath("../deployment/").resolve()
+PULUMI_PROJECT_ROOT = Path(__file__).parent.joinpath("../infrastructure/").resolve()
 
 
 @contextmanager

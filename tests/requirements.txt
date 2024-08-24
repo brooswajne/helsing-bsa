@@ -1,7 +1,7 @@
 # All deployment dependencies are required so that we're able to actually
 # deploy test environments:
 
---editable ../deployment
+--editable ../infrastructure
 
 # All other dependencies declared here are those used just for end-to-end
 # testing purposes:

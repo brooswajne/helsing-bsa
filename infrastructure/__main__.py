@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pulumi
 
-from infrastructure.routes import create_routes_from_rust_project
-from infrastructure.api import create_serverless_api
+from src.routes import create_routes_from_rust_project
+from src.api import create_serverless_api
 
 API_PROJECT_ROOT = Path(__file__).parent.joinpath("../api/").resolve()
 
