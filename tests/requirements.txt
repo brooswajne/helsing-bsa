@@ -1,0 +1,9 @@
+# All deployment dependencies are required so that we're able to actually
+# deploy test environments:
+
+--editable ../deployment
+
+# All other dependencies declared here are those used just for end-to-end
+# testing purposes:
+
+pytest

@@ -9,6 +9,8 @@ async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
     let user = path_parameters
         .first("user")
         .ok_or("Request is missing a \"user\" path parameter")?;
+    let user = urlencoding::decode(user)
+        .map_err(|err| format!("Path parameter \"user\" is not valid UTF-8: {err}"))?;
 
     let response = Response::builder()
         .status(200)
