@@ -1,0 +1,9 @@
+name: BSA
+description: >
+    A demonstration, for the Helsing "Bring Something Awesome" interview.
+
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
