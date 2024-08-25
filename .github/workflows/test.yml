@@ -8,6 +8,10 @@ on:
   # time to run, and could in theory cost some money.
   workflow_dispatch:
   workflow_call:
+    # See https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
+    secrets:
+      TEST_AWS_ACCESS_KEY_ID: { required: true }
+      TEST_AWS_ACCESS_KEY_SECRET: { required: true }
 
 name: test
 jobs:
@@ -42,6 +46,8 @@ jobs:
 
       - run: python -m pytest . --verbose --color=yes
         env:
+          # Needed since we're using the pulumi `--local` backend, but
+          # we don't care what it's set to (doesn't need to be secure).
           PULUMI_CONFIG_PASSPHRASE: "anything"
           # GitHub runners are located in the US, so we might as well run
           # our tests there to reduce latency.

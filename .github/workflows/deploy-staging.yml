@@ -19,11 +19,10 @@ jobs:
       - check-api
       - check-infrastructure
     uses: ./.github/workflows/test.yml
+    secrets: inherit
 
   deploy:
     needs: [ test ] # No point deploying something broken!
     uses: ./.github/workflows/deploy.yml
-    with:
-      environment: Staging
-    # See https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
+    with: { environment: Staging }
     secrets: inherit
