@@ -44,15 +44,12 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install ./infrastructure
 
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          # NOTE: These are environment secrets, which are associated to the GitHub
-          # "environments" themselves. This allows us to use different credentials
-          # when deploying to different environments (if they're inside different
-          # AWS accounts).
-          aws-region: ${{ secrets.DEPLOYMENT_AWS_REGION }}
-          aws-access-key-id: ${{ secrets.DEPLOYMENT_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEPLOYMENT_AWS_ACCESS_KEY_SECRET }}
+      # Required to be able to build the API.
+      # TODO: Create a separate build.yml, and get its artifacts from this
+      # job, to avoid needing to have build-related logic here.
+      - uses: dtolnay/rust-toolchain@stable
+      - run: pip install cargo-lambda
+
       - uses: pulumi/actions@v5
         with:
           command: up
@@ -60,4 +57,11 @@ jobs:
           stack-name: brooswajne/${{ inputs.environment }}
           comment-on-summary: true
         env:
+          # NOTE: These are environment secrets, which are associated to the GitHub
+          # "environments" themselves. This allows us to use different credentials
+          # when deploying to different environments (if they're inside different
+          # AWS accounts).
           PULUMI_ACCESS_TOKEN: ${{ secrets.DEPLOYMENT_PULUMI_ACCESS_TOKEN }}
+          AWS_REGION: ${{ secrets.DEPLOYMENT_AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOYMENT_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOYMENT_AWS_ACCESS_KEY_SECRET }}
