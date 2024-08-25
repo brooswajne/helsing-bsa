@@ -1,0 +1,17 @@
+# Continuous deployment of any changes to the `main` branch to the 
+# live `Staging` environment.
+
+on:
+  push:
+    branches: [ main ]
+
+name: "cd: staging"
+jobs: 
+
+
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: Staging
+    # See https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
+    secrets: inherit
