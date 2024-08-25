@@ -70,7 +70,8 @@ def api_url() -> Generator[str, None, None]:
 def test_root_route(api_url: str):
     with request.urlopen(f"{api_url}") as response:
         assert response.status == 200
-        assert response.read().decode("utf-8") == "This is the index page."
+        response = response.read().decode("utf-8")
+        assert response.startswith("API version:")
 
 
 def test_hello_world_route(api_url: str):
