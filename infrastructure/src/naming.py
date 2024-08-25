@@ -1,5 +1,6 @@
 import pulumi
 
+
 def namespace(resource_name: str) -> str:
     """
     Given a "plain" resource name, returns a namespaced version of that resource

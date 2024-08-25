@@ -15,3 +15,32 @@ dev = [
     # Testing:
     "pytest",
 ]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+[tool.ruff.lint]
+select = [
+    "ANN",
+    "COM",
+    "E",
+    "ERA",
+    "F", 
+    "FA",
+    "I",
+    "N",
+    "PIE",
+    "PT",
+    "PTH",
+    "SIM",
+    "W",
+]
+ignore = [
+    "E701", # I like these, IMO they do no harm
+]
+isort.combine-as-imports = true
+[tool.ruff.format]
+line-ending = "lf"
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
