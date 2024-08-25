@@ -66,16 +66,7 @@ pub fn route_handler(_input: TokenStream, function: TokenStream) -> TokenStream 
 
             let ret #return_type_declaration = #function_body;
 
-            // TODO: This is just because all our responses right now are plaintext strings. But
-            // really we'd probably just want to return the return type itself (meaning it needs to
-            // implement IntoResponse).
-            // The problem is that the default implementation of IntoResponse for strings seems to
-            // be to treat them as JSON.
-            let response = lambda_http::Response::builder()
-                .status(200)
-                .header("Content-Type", "text/plain")
-                .body(ret)?;
-            Ok(response)
+            Ok(ret)
         }
 
         #[tokio::main]
