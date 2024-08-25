@@ -8,8 +8,20 @@ on:
 name: "cd: staging"
 jobs: 
 
+  check-api: { uses: ./.github/workflows/api.yml }
+  check-infrastructure: { uses: ./.github/workflows/infrastructure.yml }
+
+  test:
+    needs:
+      # No point running end-to-end tests if we're just going to have errors
+      # which could have been caught by static checks (really these should
+      # have been caught before merging...).
+      - check-api
+      - check-infrastructure
+    uses: ./.github/workflows/test.yml
 
   deploy:
+    needs: [ test ] # No point deploying something broken!
     uses: ./.github/workflows/deploy.yml
     with:
       environment: Staging
