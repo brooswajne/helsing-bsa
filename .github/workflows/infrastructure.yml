@@ -12,7 +12,7 @@ on:
   workflow_call:
   workflow_dispatch:
 
-name: 
+name: infrastructure
 jobs:
 
   lint:
