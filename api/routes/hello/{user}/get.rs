@@ -1,6 +1,7 @@
 //! A route which greets the user (based on a provided path parameter).
 
 use lambda_http::{Error, IntoResponse, Request, RequestExt, Response};
+use lib::greet::greet;
 
 async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
     println!("Received: {request:?}");
@@ -15,7 +16,7 @@ async fn handler(request: Request) -> Result<impl IntoResponse, Error> {
     let response = Response::builder()
         .status(200)
         .header("Content-Type", "text/plain")
-        .body(format!("Hello, {user}!"))?;
+        .body(greet(&user))?;
     Ok(response)
 }
 
