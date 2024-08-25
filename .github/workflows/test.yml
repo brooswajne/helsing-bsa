@@ -25,6 +25,12 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -r requirements.txt
 
+      # Required to be able to build the API.
+      # TODO: Create a separate build.yml, and get its artifacts from this
+      # job, to avoid needing to have build-related logic here.
+      - uses: dtolnay/rust-toolchain@stable
+      - run: pip install cargo-lambda
+
       # Since these are just ephemeral test environments, we might as well
       # store our stack's state locally (and discard it when the test run
       # completes).
