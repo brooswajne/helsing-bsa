@@ -36,8 +36,9 @@ select = [
     "W",
 ]
 ignore = [
-    "E701", # I like these, IMO they do no harm
+    "E701", # I like these, IMO they make things more readable
 ]
+flake8-annotations.suppress-none-returning = true
 isort.combine-as-imports = true
 [tool.ruff.format]
 line-ending = "lf"
