@@ -32,22 +32,23 @@ def create_stack(project_root: Path, stack_name: str) -> Generator[Stack, None, 
     workspace = LocalWorkspace(project_root.as_posix())
     stack = Stack.create(stack_name, workspace)
 
-    yield stack
-
     try:
-        # Destroying the stack will fail if there's a deployment currently
-        # in progress, so abort it (the test has ended anyways):
-        stack.cancel()
-    except CommandError:
-        # This will be raised if there was nothing to cancel, which is
-        # usually the case, so we don't want to bubble up the error.
-        #
-        # If a deployment **was** indeed in progress, and we failed to
-        # cancel it, then the `stack.destroy()` call will fail anyways
-        # so there's nothing more we need to do here.
-        pass
-    stack.destroy()
-    workspace.remove_stack(stack.name)
+        yield stack
+    finally:
+        try:
+            # Destroying the stack will fail if there's a deployment currently
+            # in progress, so abort it (the test has ended anyways):
+            stack.cancel()
+        except CommandError:
+            # This will be raised if there was nothing to cancel, which is
+            # usually the case, so we don't want to bubble up the error.
+            #
+            # If a deployment **was** indeed in progress, and we failed to
+            # cancel it, then the `stack.destroy()` call will fail anyways
+            # so there's nothing more we need to do here.
+            pass
+        stack.destroy()
+        workspace.remove_stack(stack.name)
 
 
 
