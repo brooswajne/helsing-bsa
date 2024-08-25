@@ -23,7 +23,7 @@ on:
       DEPLOYMENT_AWS_REGION: { required: true }
       DEPLOYMENT_AWS_ACCESS_KEY_ID: { required: true }
       DEPLOYMENT_AWS_ACCESS_KEY_SECRET: { required: true }
-      DEPLOYMENT_PULUMI_ACCESS_TOKEN: { require: true }
+      DEPLOYMENT_PULUMI_ACCESS_TOKEN: { required: true }
 
 name: deploy
 jobs:
